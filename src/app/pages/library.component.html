@@ -1,0 +1,41 @@
+<div class="library-container">
+  <h1>🎵 My Music Library</h1>
+
+  <!-- Barre de recherche -->
+  <div class="search-section">
+    <input
+      type="text"
+      placeholder="Search tracks..."
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="searchTracks()"
+      class="search-input"
+    />
+    <button (click)="searchTracks()" class="search-btn">Search</button>
+  </div>
+
+  <!-- Section des filtres -->
+  <div class="filter-section">
+    <p>Filter by category:</p>
+    <button (click)="filterByCategory('pop')">Pop</button>
+    <button (click)="filterByCategory('rock')">Rock</button>
+    <button (click)="filterByCategory('rap')">Rap</button>
+    <button (click)="filterByCategory('jazz')">Jazz</button>
+    <button (click)="filterByCategory('electronic')">Electronic</button>
+    <button (click)="filterByCategory('other')">All</button>
+  </div>
+
+  <!-- Liste des tracks avec cards -->
+  <div class="tracks-list" *ngIf="tracks$ | async as tracks">
+    <div *ngIf="tracks.length > 0" class="tracks-grid">
+      <app-track-card
+        *ngFor="let track of tracks"
+        [track]="track"
+        (play)="onPlayTrack($event)"
+        (delete)="onDeleteTrack($event)"
+      ></app-track-card>
+    </div>
+    <div *ngIf="tracks.length === 0" class="no-tracks">
+      <p>No tracks found</p>
+    </div>
+  </div>
+</div>

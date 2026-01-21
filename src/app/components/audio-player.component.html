@@ -1,0 +1,43 @@
+<div class="audio-player" *ngIf="playerState">
+  <div class="player-display">
+    <div class="current-time">{{ formatTime(playerState.currentTime) }}</div>
+    <div class="duration">{{ formatTime(playerState.duration) }}</div>
+    <div class="status">Status: {{ playerState.status }}</div>
+  </div>
+
+  <div class="progress-bar">
+    <input
+      type="range"
+      min="0"
+      [max]="playerState.duration || 0"
+      [value]="playerState.currentTime"
+      (input)="seek($event)"
+      class="progress-slider"
+    />
+  </div>
+
+  <div class="controls">
+    <button (click)="play()" class="control-btn play-btn">▶ Play</button>
+    <button (click)="pause()" class="control-btn pause-btn">⏸ Pause</button>
+    <button (click)="stop()" class="control-btn stop-btn">⏹ Stop</button>
+  </div>
+
+  <div class="volume-control">
+    <label for="volume">Volume:</label>
+    <input
+      id="volume"
+      type="range"
+      min="0"
+      max="1"
+      step="0.1"
+      [value]="playerState.volume"
+      (input)="setVolume($event)"
+      class="volume-slider"
+    />
+    <span>{{ Math.round(playerState.volume * 100) }}%</span>
+  </div>
+
+  <div class="loading" *ngIf="playerState.isLoading">
+    Loading...
+  </div>
+</div>

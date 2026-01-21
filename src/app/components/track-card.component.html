@@ -1,0 +1,22 @@
+<div class="track-card">
+  <div class="card-header">
+    <h3 class="track-title">{{ track.title }}</h3>
+    <span class="category-badge">{{ track.category }}</span>
+  </div>
+
+  <div class="card-body">
+    <p class="artist">by {{ track.artist }}</p>
+    <p *ngIf="track.description" class="description">{{ track.description }}</p>
+
+    <div class="metadata">
+      <span class="duration">⏱ {{ track.duration }}s</span>
+      <span class="added-date">📅 {{ formatDate(track.addedDate) }}</span>
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <button (click)="onPlay()" class="btn btn-play">▶ Play</button>
+    <a [routerLink]="['/track', track.id]" class="btn btn-info">ℹ Details</a>
+    <button (click)="onDelete()" class="btn btn-delete">🗑 Delete</button>
+  </div>
+</div>

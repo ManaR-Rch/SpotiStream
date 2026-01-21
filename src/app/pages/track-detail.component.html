@@ -1,0 +1,27 @@
+<div class="track-detail-container" *ngIf="track; else noTrack">
+  <button (click)="goBack()" class="back-btn">← Back to Library</button>
+
+  <div class="track-info">
+    <h1>{{ track.title }}</h1>
+    <p class="artist">by {{ track.artist }}</p>
+    <p class="category">Category: {{ track.category }}</p>
+    <p class="duration">Duration: {{ track.duration }}s</p>
+    <p class="added">Added: {{ track.addedDate | date }}</p>
+  </div>
+
+  <div class="track-description" *ngIf="track.description">
+    <h3>Description</h3>
+    <p>{{ track.description }}</p>
+  </div>
+
+  <div class="player-controls">
+    <button (click)="playTrack()" class="play-btn">▶ Play</button>
+  </div>
+</div>
+
+<ng-template #noTrack>
+  <div class="no-track">
+    <p>Track not found</p>
+    <button (click)="goBack()" class="back-btn">← Back to Library</button>
+  </div>
+</ng-template>
