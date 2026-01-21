@@ -16,12 +16,43 @@
   <!-- Section des filtres -->
   <div class="filter-section">
     <p>Filter by category:</p>
-    <button (click)="filterByCategory('pop')">Pop</button>
-    <button (click)="filterByCategory('rock')">Rock</button>
-    <button (click)="filterByCategory('rap')">Rap</button>
-    <button (click)="filterByCategory('jazz')">Jazz</button>
-    <button (click)="filterByCategory('electronic')">Electronic</button>
-    <button (click)="filterByCategory('other')">All</button>
+    <button 
+      (click)="filterByCategory('all')"
+      [class.active]="selectedCategory === 'all'"
+    >
+      All
+    </button>
+    <button 
+      (click)="filterByCategory('pop')"
+      [class.active]="selectedCategory === 'pop'"
+    >
+      Pop
+    </button>
+    <button 
+      (click)="filterByCategory('rock')"
+      [class.active]="selectedCategory === 'rock'"
+    >
+      Rock
+    </button>
+    <button 
+      (click)="filterByCategory('rap')"
+      [class.active]="selectedCategory === 'rap'"
+    >
+      Rap
+    </button>
+    <button 
+      (click)="filterByCategory('jazz')"
+      [class.active]="selectedCategory === 'jazz'"
+    >
+      Jazz
+    </button>
+    <button 
+      (click)="filterByCategory('electronic')"
+      [class.active]="selectedCategory === 'electronic'"
+    >
+      Electronic
+    </button>
+    <button (click)="resetFilters()" class="reset-btn">Reset</button>
   </div>
 
   <!-- Liste des tracks avec cards -->
@@ -32,6 +63,8 @@
         [track]="track"
         (play)="onPlayTrack($event)"
         (delete)="onDeleteTrack($event)"
+        (like)="onLikeTrack($event)"
+        (unlike)="onUnlikeTrack($event)"
       ></app-track-card>
     </div>
     <div *ngIf="tracks.length === 0" class="no-tracks">
