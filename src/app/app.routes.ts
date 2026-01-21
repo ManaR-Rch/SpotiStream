@@ -1,7 +1,15 @@
 import { Routes } from '@angular/router';
-import { LibraryComponent } from './pages/library.component';
-import { TrackDetailComponent } from './pages/track-detail.component';
 
+/**
+ * Routes de l'application
+ * 
+ * Configuration simple et lisible:
+ * - Redirection par défaut vers /library
+ * - Pages principales: library et track detail
+ * - Wildcard pour les URLs invalides
+ * 
+ * Niveau: DÉBUTANT - Pas de lazy loading complexe
+ */
 export const routes: Routes = [
   {
     path: '',
@@ -10,14 +18,22 @@ export const routes: Routes = [
   },
   {
     path: 'library',
-    component: LibraryComponent
+    loadComponent: () =>
+      import('./pages/library.component').then(m => m.LibraryComponent)
+  },
+  {
+    path: 'add-track',
+    loadComponent: () =>
+      import('./components/add-track.component').then(m => m.AddTrackComponent)
   },
   {
     path: 'track/:id',
-    component: TrackDetailComponent
+    loadComponent: () =>
+      import('./pages/track-detail.component').then(m => m.TrackDetailComponent)
   },
   {
     path: '**',
     redirectTo: '/library'
   }
 ];
+
