@@ -112,6 +112,27 @@
   transform: scale(1.05);
 }
 
+.btn-like {
+  background-color: #ff6b9d;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-like:hover {
+  background-color: #ff5285;
+  transform: scale(1.1);
+}
+
+.btn-like.liked {
+  background-color: #d63384;
+  font-weight: bold;
+}
+
 .btn-info {
   background-color: #17a2b8;
   color: white;
@@ -131,6 +152,20 @@
 .btn-delete:hover {
   background-color: #c82333;
   transform: scale(1.05);
+}
+
+.track-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 @media (max-width: 600px) {
