@@ -107,9 +107,4 @@ export class AudioPlayerComponent implements OnInit {
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
-
-  /**
-   * Arrondit un nombre (exposé pour le template)
-   */
-  Math = Math;
 }
