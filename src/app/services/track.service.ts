@@ -1,82 +1,23 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Track, TrackState } from '../models/track.model';
+import { StorageService } from './storage.service';
 
 /**
  * Service pour gérer les opérations CRUD des tracks
- * Utilise RxJS BehaviorSubject pour la réactivité
+ * 
+ * Utilise:
+ * - StorageService pour la persistence avec localStorage
+ * - BehaviorSubject pour la réactivité
+ * - Logique simple et lisible pour débutant
  */
 @Injectable({
   providedIn: 'root',
 })
 export class TrackService {
-  // Données de test
-  private testTracks: Track[] = [
-    {
-      id: 'track-1',
-      title: 'Bohemian Rhapsody',
-      artist: 'Queen',
-      description: 'Un chef-d\'œuvre classique du rock',
-      category: 'rock',
-      duration: 354,
-      addedDate: new Date('2025-01-01'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    },
-    {
-      id: 'track-2',
-      title: 'Blinding Lights',
-      artist: 'The Weeknd',
-      description: 'Hit pop moderne',
-      category: 'pop',
-      duration: 200,
-      addedDate: new Date('2025-01-05'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-    },
-    {
-      id: 'track-3',
-      title: 'Lose Yourself',
-      artist: 'Eminem',
-      description: 'Classique du hip-hop',
-      category: 'rap',
-      duration: 326,
-      addedDate: new Date('2025-01-10'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-    },
-    {
-      id: 'track-4',
-      title: 'Midnight City',
-      artist: 'M83',
-      description: 'Synthwave électronique',
-      category: 'electronic',
-      duration: 244,
-      addedDate: new Date('2025-01-08'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-    },
-    {
-      id: 'track-5',
-      title: 'Take Five',
-      artist: 'Dave Brubeck',
-      description: 'Jazz classique intemporel',
-      category: 'jazz',
-      duration: 324,
-      addedDate: new Date('2025-01-03'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
-    },
-    {
-      id: 'track-6',
-      title: 'Stairway to Heaven',
-      artist: 'Led Zeppelin',
-      description: 'Un classique du rock progressive',
-      category: 'rock',
-      duration: 482,
-      addedDate: new Date('2025-01-02'),
-      filePath: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
-    },
-  ];
-
-  // État initial du service
+  // État initial du service (créé à partir du localStorage)
   private initialState: TrackState = {
-    tracks: this.testTracks,
+    tracks: [],
     loading: false,
     error: null,
     success: false,
@@ -86,8 +27,26 @@ export class TrackService {
   private trackState = new BehaviorSubject<TrackState>(this.initialState);
   public tracks$ = this.trackState.asObservable();
 
-  constructor() {
-    console.log('TrackService initialized with', this.testTracks.length, 'test tracks');
+  /**
+   * Injecter le StorageService
+   */
+  constructor(private storageService: StorageService) {
+    // Charger les tracks depuis localStorage
+    this.loadTracksFromStorage();
+    console.log('TrackService initialized');
+  }
+
+  /**
+   * Charger les tracks depuis le StorageService
+   */
+  private loadTracksFromStorage(): void {
+    const tracks = this.storageService.getTracks();
+    this.trackState.next({
+      tracks,
+      loading: false,
+      error: null,
+      success: true,
+    });
   }
 
   /**
@@ -105,12 +64,12 @@ export class TrackService {
    * @param track - Le track à ajouter
    */
   addTrack(track: Track): void {
+    // Ajouter dans le storage
+    this.storageService.addTrack(track);
+
+    // Mettre à jour l'état local
     const currentState = this.trackState.value;
-    const newTrack: Track = {
-      ...track,
-      id: this.generateId(),
-    };
-    const updatedTracks = [...currentState.tracks, newTrack];
+    const updatedTracks = [...currentState.tracks, track];
     this.trackState.next({
       ...currentState,
       tracks: updatedTracks,
@@ -125,13 +84,17 @@ export class TrackService {
    * @param updatedTrack - Les données mises à jour
    */
   updateTrack(trackId: string, updatedTrack: Partial<Track>): void {
+    // Mettre à jour dans le storage
+    this.storageService.updateTrack(trackId, updatedTrack);
+
+    // Mettre à jour l'état local
     const currentState = this.trackState.value;
-    const updatedTracks = currentState.tracks.map((track) =>
+    const updated = currentState.tracks.map((track) =>
       track.id === trackId ? { ...track, ...updatedTrack } : track
     );
     this.trackState.next({
       ...currentState,
-      tracks: updatedTracks,
+      tracks: updated,
       success: true,
       error: null,
     });
@@ -142,6 +105,10 @@ export class TrackService {
    * @param trackId - ID du track à supprimer
    */
   deleteTrack(trackId: string): void {
+    // Supprimer du storage
+    this.storageService.deleteTrack(trackId);
+
+    // Mettre à jour l'état local
     const currentState = this.trackState.value;
     const updatedTracks = currentState.tracks.filter(
       (track) => track.id !== trackId
