@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AudioPlayerState, AudioPlayerStatus } from '../models/track.model';
+import { AudioPlayerState, AudioPlayerStatus, Track } from '../models/track.model';
 
 /**
  * Service pour gérer le lecteur audio
- * Contrôle l'état de lecture, le volume et la progression
+ * 
+ * Contrôle:
+ * - Play/Pause/Stop
+ * - Next/Previous (navigation dans la playlist)
+ * - Volume et progression
+ * - Gestion de la playlist
+ * 
+ * Niveau: DÉBUTANT - Code simple et lisible
  */
 @Injectable({
   providedIn: 'root',
@@ -25,6 +32,10 @@ export class AudioPlayerService {
     this.initialState
   );
   public playerState$ = this.playerState.asObservable();
+
+  // Playlist et index courant
+  private playlist: Track[] = [];
+  private currentTrackIndex: number = -1;
 
   // Élément audio HTML
   private audioElement: HTMLAudioElement | null = null;
@@ -55,12 +66,24 @@ export class AudioPlayerService {
   }
 
   /**
+   * Définir la playlist
+   * @param tracks - Array de tracks
+   */
+  setPlaylist(tracks: Track[]): void {
+    this.playlist = tracks;
+  }
+
+  /**
    * Lance la lecture d'une piste
    * @param trackFilePath - Chemin du fichier audio
+   * @param trackId - ID du track (optionnel, pour la navigation)
    */
-  play(trackFilePath: string): void {
+  play(trackFilePath: string, trackId?: string): void {
     if (this.audioElement) {
       this.audioElement.src = trackFilePath;
+      if (trackId) {
+        this.updateState({ currentTrackId: trackId });
+      }
       this.audioElement.play().catch((error) => {
         console.error('Erreur lors de la lecture:', error);
         this.setError();
@@ -111,17 +134,43 @@ export class AudioPlayerService {
   }
 
   /**
-   * Passe à la piste suivante (à implémenter avec le TrackService)
+   * Passe à la piste suivante
    */
   next(): void {
-    console.log('Next track - to be implemented');
+    // Augmenter l'index
+    this.currentTrackIndex++;
+
+    // Si on est à la fin de la playlist, revenir au début
+    if (this.currentTrackIndex >= this.playlist.length) {
+      this.currentTrackIndex = 0;
+    }
+
+    // Charger et lancer la piste
+    const nextTrack = this.playlist[this.currentTrackIndex];
+    if (nextTrack && nextTrack.filePath) {
+      this.play(nextTrack.filePath, nextTrack.id);
+      console.log('Playing next track:', nextTrack.title);
+    }
   }
 
   /**
-   * Revient à la piste précédente (à implémenter avec le TrackService)
+   * Revient à la piste précédente
    */
   previous(): void {
-    console.log('Previous track - to be implemented');
+    // Diminuer l'index
+    this.currentTrackIndex--;
+
+    // Si on est avant le début, aller à la fin
+    if (this.currentTrackIndex < 0) {
+      this.currentTrackIndex = this.playlist.length - 1;
+    }
+
+    // Charger et lancer la piste
+    const prevTrack = this.playlist[this.currentTrackIndex];
+    if (prevTrack && prevTrack.filePath) {
+      this.play(prevTrack.filePath, prevTrack.id);
+      console.log('Playing previous track:', prevTrack.title);
+    }
   }
 
   /**
