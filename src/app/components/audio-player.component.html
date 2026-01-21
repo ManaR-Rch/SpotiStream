@@ -1,10 +1,12 @@
-<div class="audio-player" *ngIf="playerState">
+<div class="audio-player" *ngIf="playerState$ | async as playerState">
+  <!-- Affichage du temps -->
   <div class="player-display">
     <div class="current-time">{{ formatTime(playerState.currentTime) }}</div>
     <div class="duration">{{ formatTime(playerState.duration) }}</div>
-    <div class="status">Status: {{ playerState.status }}</div>
+    <div class="status">{{ playerState.status | titlecase }}</div>
   </div>
 
+  <!-- Barre de progression -->
   <div class="progress-bar">
     <input
       type="range"
@@ -16,14 +18,28 @@
     />
   </div>
 
+  <!-- Contrôles de lecture -->
   <div class="controls">
-    <button (click)="play()" class="control-btn play-btn">▶ Play</button>
-    <button (click)="pause()" class="control-btn pause-btn">⏸ Pause</button>
-    <button (click)="stop()" class="control-btn stop-btn">⏹ Stop</button>
+    <button (click)="previous()" class="control-btn prev-btn" title="Piste précédente">
+      ⏮ Prev
+    </button>
+    <button (click)="play()" class="control-btn play-btn" title="Lecture">
+      ▶ Play
+    </button>
+    <button (click)="pause()" class="control-btn pause-btn" title="Pause">
+      ⏸ Pause
+    </button>
+    <button (click)="stop()" class="control-btn stop-btn" title="Arrêt">
+      ⏹ Stop
+    </button>
+    <button (click)="next()" class="control-btn next-btn" title="Piste suivante">
+      Next ⏭
+    </button>
   </div>
 
+  <!-- Contrôle du volume -->
   <div class="volume-control">
-    <label for="volume">Volume:</label>
+    <label for="volume">🔊 Volume:</label>
     <input
       id="volume"
       type="range"
@@ -37,7 +53,8 @@
     <span>{{ Math.round(playerState.volume * 100) }}%</span>
   </div>
 
+  <!-- Indicateur de chargement -->
   <div class="loading" *ngIf="playerState.isLoading">
-    Loading...
+    ⌛ Chargement...
   </div>
 </div>

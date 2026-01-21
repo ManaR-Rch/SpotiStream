@@ -1,15 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AudioPlayerService } from '../services/audio-player.service';
+import { TrackService } from '../services/track.service';
+import { Observable } from 'rxjs';
 import { AudioPlayerState } from '../models/track.model';
-import { Subscription } from 'rxjs';
 
 /**
  * Composant Audio Player
- * Affiche les contrôles de lecture et l'état du lecteur
+ * 
+ * Affiche les contrôles de lecture:
  * - Boutons play/pause/stop
+ * - Boutons next/previous
  * - Barre de progression
  * - Contrôle du volume
+ * 
+ * Niveau: DÉBUTANT - Code simple et lisible
  */
 @Component({
   selector: 'app-audio-player',
@@ -18,43 +23,35 @@ import { Subscription } from 'rxjs';
   templateUrl: './audio-player.component.html',
   styleUrl: './audio-player.component.css'
 })
-export class AudioPlayerComponent implements OnInit, OnDestroy {
-  playerState: AudioPlayerState | null = null;
-  private subscription: Subscription | null = null;
+export class AudioPlayerComponent implements OnInit {
+  // Observable pour l'état du lecteur (avec async pipe)
+  playerState$: Observable<AudioPlayerState>;
+  
+  // Exposer Math pour le template
+  Math = Math;
 
-  constructor(private audioPlayerService: AudioPlayerService) {}
-
-  ngOnInit(): void {
-    // S'abonner aux changements d'état du lecteur
-    this.subscription = this.audioPlayerService.playerState$.subscribe(
-      (state: AudioPlayerState) => {
-        this.playerState = state;
-      }
-    );
+  constructor(
+    private audioPlayerService: AudioPlayerService,
+    private trackService: TrackService
+  ) {
+    this.playerState$ = this.audioPlayerService.playerState$;
   }
 
-  ngOnDestroy(): void {
-    // Se désabonner pour éviter les fuites mémoire
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  ngOnInit(): void {
+    // Initialiser la playlist
+    this.trackService.getTracks().subscribe((tracks) => {
+      this.audioPlayerService.setPlaylist(tracks);
+    });
   }
 
   /**
-   * Lance la lecture (avec un fichier de test)
+   * Lance la lecture
    */
   play(): void {
-    if (this.playerState?.status === 'paused') {
-      // Si en pause, reprendre la lecture
-      const currentTrackId = this.playerState.currentTrackId;
-      if (currentTrackId) {
-        this.audioPlayerService.play(currentTrackId);
-      }
-    } else {
-      // Sinon, jouer le premier track de test
-      console.log('Play clicked - no track selected');
-      this.audioPlayerService.play('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-    }
+    this.audioPlayerService.play(
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      'default-track'
+    );
   }
 
   /**
@@ -72,10 +69,24 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Passe à la piste suivante
+   */
+  next(): void {
+    this.audioPlayerService.next();
+  }
+
+  /**
+   * Revient à la piste précédente
+   */
+  previous(): void {
+    this.audioPlayerService.previous();
+  }
+
+  /**
    * Change le volume
    */
   setVolume(event: any): void {
-    const volume = event.target.value;
+    const volume = parseFloat(event.target.value);
     this.audioPlayerService.setVolume(volume);
   }
 
