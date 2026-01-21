@@ -1,0 +1,96 @@
+<div class="add-track-container">
+  <h2>➕ Ajouter un nouveau track</h2>
+
+  <!-- Message de succès -->
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="trackForm" (ngSubmit)="onSubmit()" class="form">
+    
+    <!-- Champ: Titre -->
+    <div class="form-group">
+      <label for="title">Titre *</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="Nom du track"
+        class="form-input"
+        [class.error]="submitted && title?.invalid"
+      />
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && title?.invalid" class="error-message">
+        <span *ngIf="title?.errors?.['required']">Le titre est obligatoire</span>
+        <span *ngIf="title?.errors?.['maxlength']">
+          Max 50 caractères ({{ title?.value?.length }}/50)
+        </span>
+      </div>
+    </div>
+
+    <!-- Champ: Artiste -->
+    <div class="form-group">
+      <label for="artist">Artiste *</label>
+      <input
+        id="artist"
+        type="text"
+        formControlName="artist"
+        placeholder="Nom de l'artiste"
+        class="form-input"
+        [class.error]="submitted && artist?.invalid"
+      />
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && artist?.invalid" class="error-message">
+        <span *ngIf="artist?.errors?.['required']">L'artiste est obligatoire</span>
+      </div>
+    </div>
+
+    <!-- Champ: Description -->
+    <div class="form-group">
+      <label for="description">Description (optionnel)</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Courte description du track..."
+        class="form-input"
+        rows="3"
+        [class.error]="submitted && description?.invalid"
+      ></textarea>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && description?.invalid" class="error-message">
+        <span *ngIf="description?.errors?.['maxlength']">
+          Max 200 caractères ({{ description?.value?.length }}/200)
+        </span>
+      </div>
+    </div>
+
+    <!-- Champ: Catégorie -->
+    <div class="form-group">
+      <label for="category">Catégorie *</label>
+      <select
+        id="category"
+        formControlName="category"
+        class="form-input"
+        [class.error]="submitted && category?.invalid"
+      >
+        <option value="">-- Sélectionner --</option>
+        <option *ngFor="let cat of categories" [value]="cat">
+          {{ cat | titlecase }}
+        </option>
+      </select>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && category?.invalid" class="error-message">
+        <span *ngIf="category?.errors?.['required']">La catégorie est obligatoire</span>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">✓ Ajouter</button>
+      <button type="button" (click)="resetForm()" class="btn btn-secondary">
+        Réinitialiser
+      </button>
+    </div>
+  </form>
+</div>
