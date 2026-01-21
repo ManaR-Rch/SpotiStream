@@ -199,6 +199,33 @@ export class TrackService {
   }
 
   /**
+   * Marque une piste comme aimée
+   * @param trackId - L'ID du track à liker
+   */
+  likeTrack(trackId: string): void {
+    this.updateTrack(trackId, { liked: true });
+  }
+
+  /**
+   * Enlève le like d'une piste
+   * @param trackId - L'ID du track
+   */
+  unlikeTrack(trackId: string): void {
+    this.updateTrack(trackId, { liked: false });
+  }
+
+  /**
+   * Incrémente le compteur de lectures
+   * @param trackId - L'ID du track
+   */
+  incrementPlays(trackId: string): void {
+    const track = this.trackState.value.tracks.find(t => t.id === trackId);
+    if (track) {
+      this.updateTrack(trackId, { plays: (track.plays || 0) + 1 });
+    }
+  }
+
+  /**
    * Génère un ID unique pour les tracks
    */
   private generateId(): string {
