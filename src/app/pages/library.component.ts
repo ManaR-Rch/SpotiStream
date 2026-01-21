@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { TrackCardComponent } from '../components/track-card.component';
 import { TrackService } from '../services/track.service';
 import { AudioPlayerService } from '../services/audio-player.service';
-import { Track } from '../models/track.model';
+import { Track, TRACK_VALIDATION } from '../models/track.model';
 import { Observable } from 'rxjs';
 
 /**
  * Page principale: Affiche la liste de tous les tracks
  * - Affiche les tracks
  * - Permet la recherche et le filtrage
+ * - Gère les likes et lectures
  */
 @Component({
   selector: 'app-library',
@@ -22,6 +23,8 @@ import { Observable } from 'rxjs';
 export class LibraryComponent implements OnInit {
   tracks$: Observable<Track[]>;
   searchTerm: string = '';
+  categories = TRACK_VALIDATION.CATEGORIES;
+  selectedCategory: Track['category'] | 'all' = 'all';
 
   constructor(
     private trackService: TrackService,
@@ -41,15 +44,36 @@ export class LibraryComponent implements OnInit {
     if (this.searchTerm.trim()) {
       this.tracks$ = this.trackService.searchTracks(this.searchTerm);
     } else {
-      this.tracks$ = this.trackService.getTracks();
+      this.loadTracks();
     }
   }
 
   /**
    * Filtre les tracks par catégorie
    */
-  filterByCategory(category: Track['category']): void {
-    this.tracks$ = this.trackService.filterByCategory(category);
+  filterByCategory(category: Track['category'] | 'all'): void {
+    this.selectedCategory = category;
+    if (category === 'all') {
+      this.loadTracks();
+    } else {
+      this.tracks$ = this.trackService.filterByCategory(category);
+    }
+  }
+
+  /**
+   * Réinitialise les filtres
+   */
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.selectedCategory = 'all';
+    this.loadTracks();
+  }
+
+  /**
+   * Charge tous les tracks
+   */
+  private loadTracks(): void {
+    this.tracks$ = this.trackService.getTracks();
   }
 
   /**
@@ -58,6 +82,7 @@ export class LibraryComponent implements OnInit {
   onPlayTrack(track: Track): void {
     if (track.filePath) {
       console.log('Playing:', track.title);
+      this.trackService.incrementPlays(track.id);
       this.audioPlayerService.play(track.filePath);
     } else {
       console.warn('Track has no audio file:', track.title);
@@ -70,6 +95,20 @@ export class LibraryComponent implements OnInit {
   onDeleteTrack(track: Track): void {
     console.log('Deleting:', track.title);
     this.trackService.deleteTrack(track.id);
-    this.tracks$ = this.trackService.getTracks();
+    this.loadTracks();
+  }
+
+  /**
+   * Gère l'ajout d'un like
+   */
+  onLikeTrack(track: Track): void {
+    this.trackService.likeTrack(track.id);
+  }
+
+  /**
+   * Gère la suppression d'un like
+   */
+  onUnlikeTrack(track: Track): void {
+    this.trackService.unlikeTrack(track.id);
   }
 }
