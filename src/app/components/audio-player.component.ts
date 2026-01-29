@@ -27,7 +27,6 @@ export class AudioPlayerComponent implements OnInit {
   // Observable pour l'état du lecteur (avec async pipe)
   playerState$: Observable<AudioPlayerState>;
   
-  // Exposer Math pour le template
   Math = Math;
 
   constructor(

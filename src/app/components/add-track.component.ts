@@ -26,6 +26,7 @@ export class AddTrackComponent implements OnInit {
   submitted = false;
   successMessage = '';
   categories = TRACK_VALIDATION.CATEGORIES;
+  audioFileData: string = ''; // Stocke le fichier audio en data URL
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,6 +63,10 @@ export class AddTrackComponent implements OnInit {
       category: [
         '',
         [Validators.required]
+      ],
+      audioFile: [
+        '',
+        [Validators.required]
       ]
     });
   }
@@ -85,6 +90,36 @@ export class AddTrackComponent implements OnInit {
     return this.trackForm.get('category');
   }
 
+  get audioFile() {
+    return this.trackForm.get('audioFile');
+  }
+
+  /**
+   * Gérer le changement de fichier audio
+   */
+  onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      // Vérifier que le fichier est un audio
+      if (file.type.startsWith('audio/')) {
+        // Convertir le fichier en data URL pour la lecture
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target?.result) {
+            this.audioFileData = e.target.result as string;
+          }
+        };
+        reader.readAsDataURL(file);
+        this.trackForm.patchValue({ audioFile: file.name });
+      } else {
+        alert('Veuillez sélectionner un fichier audio valide');
+        target.value = '';
+      }
+    }
+  }
+
   /**
    * Soumettre le formulaire
    */
@@ -96,10 +131,14 @@ export class AddTrackComponent implements OnInit {
       return;
     }
 
-    // Créer le nouveau track
+    // Créer le nouveau track avec la data URL du fichier audio
     const newTrack = {
       id: this.generateId(),
-      ...this.trackForm.value,
+      title: this.trackForm.get('title')?.value,
+      artist: this.trackForm.get('artist')?.value,
+      description: this.trackForm.get('description')?.value,
+      category: this.trackForm.get('category')?.value,
+      filePath: this.audioFileData, // Utiliser la data URL du fichier audio
       duration: 0,
       addedDate: new Date(),
       plays: 0,
@@ -112,8 +151,9 @@ export class AddTrackComponent implements OnInit {
     // Afficher le message de succès
     this.successMessage = '✅ Track ajouté avec succès!';
 
-    // Réinitialiser le formulaire
+    // Réinitialiser le formulaire et les données de fichier
     this.trackForm.reset();
+    this.audioFileData = '';
     this.submitted = false;
 
     // Masquer le message après 3 secondes

@@ -85,6 +85,31 @@
       </div>
     </div>
 
+    <!-- Champ: Fichier Audio -->
+    <div class="form-group">
+      <label for="audioFile">Fichier audio *</label>
+      <div class="file-input-wrapper">
+        <input
+          id="audioFile"
+          type="file"
+          accept="audio/*"
+          (change)="onFileSelected($event)"
+          class="file-input"
+          [class.error]="submitted && audioFile?.invalid"
+        />
+        <label for="audioFile" class="file-input-label">
+          📁 Choisir un fichier audio
+        </label>
+        <span class="file-name" *ngIf="audioFile?.value">
+          {{ audioFile?.value }}
+        </span>
+      </div>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && audioFile?.invalid" class="error-message">
+        <span *ngIf="audioFile?.errors?.['required']">Veuillez sélectionner un fichier audio</span>
+      </div>
+    </div>
+
     <!-- Boutons d'action -->
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">✓ Ajouter</button>
