@@ -1,10 +1,31 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# Frontend (Angular)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/*.log
+frontend/.env
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
+# Backend (Spring Boot)
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/bin/
+backend/*.jar
+backend/.env
+backend/.vscode/
+backend/.idea/
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
 
 # Node
 /node_modules
@@ -12,21 +33,22 @@ npm-debug.log
 yarn-error.log
 
 # IDEs and editors
-.idea/
 .project
 .classpath
 .c9/
 *.launch
-.settings/
-*.sublime-workspace
+.sublime-workspace
 
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Misc
+.env.local
+.env.*.local
 
 # Miscellaneous
 /.angular/cache
