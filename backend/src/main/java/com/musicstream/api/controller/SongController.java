@@ -125,7 +125,10 @@ public class SongController {
     public ResponseEntity<SongDTO> createSong(@RequestBody SongDTO songDTO) {
         log.info("POST /api/songs - Création d'une nouvelle chanson: {}", songDTO.getTitle());
         SongDTO createdSong = songService.createSong(songDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdSong);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .header("Location", "/api/songs/" + createdSong.getId())
+                .body(createdSong);
     }
 
     /**
