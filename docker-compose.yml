@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Frontend - Angular app served by Nginx
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: musicstream-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - API_URL=http://backend:8080
+    networks:
+      - musicstream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # Backend - Spring Boot API
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: musicstream-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:musicstreamdb
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.h2.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_COM_MUSICSTREAM=DEBUG
+    networks:
+      - musicstream-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/songs"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+networks:
+  musicstream-network:
+    driver: bridge
+
+# Volume pour persistence (optionnel - utilise H2 in-memory par défaut)
+volumes:
+  musicstream-data:
+    driver: local

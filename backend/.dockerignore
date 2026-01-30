@@ -1,0 +1,11 @@
+target
+*.jar
+*.war
+*.ear
+.git
+.gitignore
+.env
+.env.local
+*.md
+README.md
+node_modules
