@@ -3,14 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from frontend
+COPY frontend/package*.json ./
 
 # Install dependencies
 RUN npm ci
 
-# Copy source code
-COPY . .
+# Copy source code from frontend
+COPY frontend/ .
 
 # Build Angular app
 RUN npm run build
@@ -18,11 +18,11 @@ RUN npm run build
 # Runtime stage
 FROM nginx:alpine
 
-# Copy built app to nginx
-COPY --from=builder /app/dist/musicstream /usr/share/nginx/html
+# Copy built app to nginx (Angular 17+ outputs to browser/ subfolder)
+COPY --from=builder /app/dist/musicstream-app/browser /usr/share/nginx/html
 
 # Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80

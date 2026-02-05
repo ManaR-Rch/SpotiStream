@@ -1,0 +1,10 @@
+com\musicstream\api\dto\SongDTO.class
+com\musicstream\api\entity\Song$SongBuilder.class
+com\musicstream\api\entity\Song.class
+com\musicstream\api\MusicstreamApiApplication.class
+com\musicstream\api\config\WebConfig.class
+com\musicstream\api\dto\SongDTO$SongDTOBuilder.class
+com\musicstream\api\controller\SongController.class
+com\musicstream\api\service\SongService.class
+com\musicstream\api\controller\HealthController.class
+com\musicstream\api\repository\SongRepository.class

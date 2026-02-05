@@ -1,0 +1,81 @@
+<div class="library-container">
+  <div class="library-header">
+    <h1>My Music Library</h1>
+    <div class="header-actions">
+      <button (click)="refreshTracks()" class="btn-refresh" [disabled]="isLoading">
+        Refresh
+      </button>
+      <a routerLink="/add-track" class="btn-add">Add Track</a>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <span>{{ errorMessage }}</span>
+    <button (click)="clearError()" class="btn-close">✕</button>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-section">
+    <input type="text" placeholder="Rechercher par titre ou artiste..." [(ngModel)]="searchTerm"
+      (keyup.enter)="searchTracks()" (input)="searchTracks()" class="search-input" />
+  </div>
+
+  <!-- Section des filtres -->
+  <div class="filter-section">
+    <span class="filter-label">Catégorie:</span>
+    <button (click)="filterByCategory('all')" [class.active]="selectedCategory === 'all'" class="filter-btn">
+      Tous
+    </button>
+    <button *ngFor="let cat of categories" (click)="filterByCategory(cat)" [class.active]="selectedCategory === cat"
+      class="filter-btn">
+      {{ cat | titlecase }}
+    </button>
+    <button *ngIf="searchTerm || selectedCategory !== 'all'" (click)="resetFilters()" class="reset-btn">
+      Reset
+    </button>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading tracks...</p>
+  </div>
+
+  <!-- Liste des tracks -->
+  <div *ngIf="!isLoading" class="tracks-section">
+    <!-- Tracks trouvés -->
+    <div *ngIf="filteredTracks.length > 0" class="tracks-grid">
+      <app-track-card 
+        *ngFor="let track of filteredTracks" 
+        [track]="track" 
+        [draggable]="true"
+        (play)="onPlayTrack($event)"
+        (delete)="onDeleteTrack($event)" 
+        (like)="onLikeTrack($event)" 
+        (unlike)="onUnlikeTrack($event)"
+        (reorder)="onReorderTrack($event)">
+      </app-track-card>
+    </div>
+
+    <!-- Aucun track trouvé après filtrage -->
+    <div *ngIf="filteredTracks.length === 0 && tracks.length > 0" class="no-results">
+      <p>No results found</p>
+      <button (click)="resetFilters()" class="btn-secondary">Réinitialiser les filtres</button>
+    </div>
+
+    <!-- Bibliothèque vide -->
+    <div *ngIf="tracks.length === 0" class="empty-library">
+      <div class="empty-icon"></div>
+      <h2>Your library is empty</h2>
+      <p>Add your first track to get started!</p>
+      <a routerLink="/add-track" class="btn-primary">Add Track</a>
+    </div>
+  </div>
+
+  <!-- Compteur de tracks et info drag & drop -->
+  <div class="library-footer" *ngIf="!isLoading && filteredTracks.length > 0">
+    <span class="tracks-count">{{ filteredTracks.length }} of {{ tracks.length }} tracks</span>
+    <span class="drag-hint">Drag and drop to reorder</span>
+  </div>
+</div>

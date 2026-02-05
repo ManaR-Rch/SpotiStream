@@ -1,0 +1,151 @@
+<div class="track-detail-container" *ngIf="track; else noTrack">
+  <div class="detail-header">
+    <button (click)="goBack()" class="back-btn">Back</button>
+    <a [routerLink]="['/edit-track', track.id]" class="edit-btn">Edit</a>
+  </div>
+
+  <div class="track-content">
+    <!-- Left column: Image and info -->
+    <div class="track-info-section">
+      <!-- Cover image -->
+      <div class="cover-container">
+        <img *ngIf="track.coverImage" [src]="track.coverImage" [alt]="track.title" class="cover-image" />
+        <div *ngIf="!track.coverImage" class="cover-placeholder">
+          <span class="placeholder-icon"></span>
+        </div>
+      </div>
+
+      <div class="track-info">
+        <h1>{{ track.title }}</h1>
+        <p class="artist">{{ track.artist }}</p>
+        <span class="category-badge">{{ track.category }}</span>
+        
+        <div class="metadata">
+          <p class="duration">Duration: {{ track.duration | duration:'long' }}</p>
+          <p class="added">Added: {{ track.addedDate | date:'longDate' }}</p>
+          <p class="plays">{{ track.plays || 0 }} plays</p>
+          <p class="liked" *ngIf="track.liked">Liked</p>
+        </div>
+      </div>
+
+      <div class="track-description" *ngIf="track.description">
+        <h3>Description</h3>
+        <p>{{ track.description }}</p>
+      </div>
+    </div>
+
+    <!-- Right column: Player and Lyrics -->
+    <div class="player-lyrics-section">
+      <!-- Integrated audio player -->
+      <div class="player-container" *ngIf="playerState$ | async as playerState">
+        <div class="player-header">
+          <h3>Player</h3>
+        </div>
+
+        <!-- Time display -->
+        <div class="player-display">
+          <div class="current-time">{{ formatTime(playerState.currentTime) }}</div>
+          <div class="status" [class.playing]="playerState.status === 'playing'">
+            {{ playerState.status | titlecase }}
+          </div>
+          <div class="duration-display">{{ formatTime(playerState.duration) }}</div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-bar">
+          <input
+            type="range"
+            min="0"
+            [max]="playerState.duration || 0"
+            [value]="playerState.currentTime"
+            (input)="seek($event)"
+            class="progress-slider"
+          />
+        </div>
+
+        <!-- Playback controls -->
+        <div class="player-controls">
+          <button (click)="playTrack()" class="control-btn play-btn" title="Play">
+            <span class="icon-play"></span>
+          </button>
+          <button (click)="pauseTrack()" class="control-btn pause-btn" title="Pause">
+            <span class="icon-pause"></span>
+          </button>
+          <button (click)="stopTrack()" class="control-btn stop-btn" title="Stop">
+            <span class="icon-stop"></span>
+          </button>
+        </div>
+
+        <!-- Volume control -->
+        <div class="volume-control">
+          <label for="volume">Volume</label>
+          <input
+            id="volume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            [value]="playerState.volume"
+            (input)="setVolume($event)"
+            class="volume-slider"
+          />
+          <span>{{ Math.round(playerState.volume * 100) }}%</span>
+        </div>
+
+        <!-- Loading indicator -->
+        <div class="loading" *ngIf="playerState.isLoading">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Lyrics Section -->
+      <div class="lyrics-section">
+        <div class="lyrics-header">
+          <h3>Lyrics</h3>
+          <button 
+            *ngIf="!showLyrics" 
+            (click)="loadLyrics()" 
+            class="btn-lyrics"
+            [disabled]="lyricsLoading"
+          >
+            {{ lyricsLoading ? 'Loading...' : 'Search Lyrics' }}
+          </button>
+          <button *ngIf="showLyrics" (click)="closeLyrics()" class="btn-close-lyrics">
+            Close
+          </button>
+        </div>
+
+        <!-- Lyrics content -->
+        <div *ngIf="showLyrics" class="lyrics-content">
+          <!-- Loading -->
+          <div *ngIf="lyricsLoading" class="lyrics-loading">
+            <div class="spinner-small"></div>
+            <p>Searching for lyrics...</p>
+          </div>
+
+          <!-- Error -->
+          <div *ngIf="lyricsError && !lyricsLoading" class="lyrics-error">
+            <p>{{ lyricsError }}</p>
+            <button (click)="loadLyrics()" class="btn-retry">Retry</button>
+          </div>
+
+          <!-- Lyrics found -->
+          <div *ngIf="lyrics && !lyricsLoading" class="lyrics-text">
+            <pre>{{ lyrics.lyrics }}</pre>
+            <p class="lyrics-source" *ngIf="lyrics.source">
+              Source: {{ lyrics.source }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noTrack>
+  <div class="no-track">
+    <div class="no-track-icon"></div>
+    <p>Track not found</p>
+    <button (click)="goBack()" class="back-btn">Back to Library</button>
+  </div>
+</ng-template>

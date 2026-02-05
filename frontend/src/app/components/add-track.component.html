@@ -1,0 +1,193 @@
+<div class="add-track-container">
+  <div class="header">
+    <button (click)="goBack()" class="btn-back">← Retour</button>
+    <h2>➕ Ajouter un nouveau track</h2>
+  </div>
+
+  <!-- Message de succès -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="trackForm" (ngSubmit)="onSubmit()" class="form">
+    
+    <!-- Champ: Titre -->
+    <div class="form-group">
+      <label for="title">Titre * <small>(max 50 caractères)</small></label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        placeholder="Nom du track"
+        class="form-input"
+        [class.error]="submitted && title?.invalid"
+        maxlength="50"
+      />
+      <div class="char-count" *ngIf="title?.value">
+        {{ title?.value?.length }}/50
+      </div>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && title?.invalid" class="error-message">
+        <span *ngIf="title?.errors?.['required']">Le titre est obligatoire</span>
+        <span *ngIf="title?.errors?.['maxlength']">
+          Maximum 50 caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Champ: Artiste -->
+    <div class="form-group">
+      <label for="artist">Artiste *</label>
+      <input
+        id="artist"
+        type="text"
+        formControlName="artist"
+        placeholder="Nom de l'artiste"
+        class="form-input"
+        [class.error]="submitted && artist?.invalid"
+      />
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && artist?.invalid" class="error-message">
+        <span *ngIf="artist?.errors?.['required']">L'artiste est obligatoire</span>
+      </div>
+    </div>
+
+    <!-- Champ: Description -->
+    <div class="form-group">
+      <label for="description">Description <small>(optionnel, max 200 caractères)</small></label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Courte description du track..."
+        class="form-input"
+        rows="3"
+        [class.error]="submitted && description?.invalid"
+        maxlength="200"
+      ></textarea>
+      <div class="char-count" *ngIf="description?.value">
+        {{ description?.value?.length }}/200
+      </div>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && description?.invalid" class="error-message">
+        <span *ngIf="description?.errors?.['maxlength']">
+          Maximum 200 caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Champ: Catégorie -->
+    <div class="form-group">
+      <label for="category">Catégorie *</label>
+      <select
+        id="category"
+        formControlName="category"
+        class="form-input"
+        [class.error]="submitted && category?.invalid"
+      >
+        <option value="">-- Sélectionner --</option>
+        <option *ngFor="let cat of categories" [value]="cat">
+          {{ cat | titlecase }}
+        </option>
+      </select>
+      <!-- Afficher les erreurs -->
+      <div *ngIf="submitted && category?.invalid" class="error-message">
+        <span *ngIf="category?.errors?.['required']">La catégorie est obligatoire</span>
+      </div>
+    </div>
+
+    <!-- Champ: Fichier Audio -->
+    <div class="form-group">
+      <label for="audioFile">Fichier audio *</label>
+      <div class="file-info">
+        <small>Formats acceptés: {{ ALLOWED_FORMATS }} | Taille max: {{ MAX_FILE_SIZE_MB }} MB</small>
+      </div>
+      <div class="file-input-wrapper">
+        <input
+          id="audioFile"
+          type="file"
+          accept=".mp3,.wav,.ogg,audio/mpeg,audio/wav,audio/ogg"
+          (change)="onFileSelected($event)"
+          class="file-input"
+        />
+        <label for="audioFile" class="file-input-label">
+          📁 Choisir un fichier audio
+        </label>
+      </div>
+      
+      <!-- Info sur le fichier sélectionné -->
+      <div *ngIf="fileInfo" class="file-selected">
+        ✅ {{ fileInfo }}
+      </div>
+      
+      <!-- Erreur de fichier -->
+      <div *ngIf="fileError" class="error-message">
+        {{ fileError }}
+      </div>
+      
+      <!-- Erreur si pas de fichier sélectionné lors de la soumission -->
+      <div *ngIf="submitted && !selectedFile && !fileError" class="error-message">
+        Veuillez sélectionner un fichier audio
+      </div>
+    </div>
+
+    <!-- Champ: Image de couverture (optionnel) -->
+    <div class="form-group">
+      <label for="coverImage">Image de couverture <small>(optionnel)</small></label>
+      <div class="file-info">
+        <small>Formats acceptés: {{ ALLOWED_IMAGE_FORMATS }} | Taille max: {{ MAX_IMAGE_SIZE_MB }} MB</small>
+      </div>
+      <div class="file-input-wrapper">
+        <input
+          id="coverImage"
+          type="file"
+          accept=".png,.jpeg,.jpg,image/png,image/jpeg"
+          (change)="onCoverImageSelected($event)"
+          class="file-input"
+        />
+        <label for="coverImage" class="file-input-label">
+          🖼️ Choisir une image de couverture
+        </label>
+      </div>
+      
+      <!-- Aperçu de l'image -->
+      <div *ngIf="coverImagePreview" class="cover-preview">
+        <img [src]="coverImagePreview" alt="Aperçu de la couverture" class="cover-preview-img" />
+        <div class="cover-preview-info">
+          <span>{{ coverImageInfo }}</span>
+          <button type="button" (click)="removeCoverImage()" class="btn-remove-cover">✕ Supprimer</button>
+        </div>
+      </div>
+      
+      <!-- Erreur d'image -->
+      <div *ngIf="coverImageError" class="error-message">
+        {{ coverImageError }}
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="!isLoading">✓ Ajouter</span>
+        <span *ngIf="isLoading">⏳ Chargement...</span>
+      </button>
+      <button 
+        type="button" 
+        (click)="resetForm()" 
+        class="btn btn-secondary"
+        [disabled]="isLoading"
+      >
+        Réinitialiser
+      </button>
+    </div>
+  </form>
+</div>

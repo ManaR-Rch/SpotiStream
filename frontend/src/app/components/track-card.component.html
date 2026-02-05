@@ -1,0 +1,70 @@
+<div class="track-card" 
+     [attr.draggable]="draggable"
+     (dragstart)="onDragStart($event)"
+     (dragend)="onDragEnd($event)"
+     (dragover)="onDragOver($event)"
+     (drop)="onDrop($event)"
+     [class.dragging]="isDragging">
+  
+  <!-- Cover Image with Hover Overlay -->
+  <div class="cover-container">
+    <img 
+      *ngIf="track.coverImage" 
+      [src]="track.coverImage" 
+      [alt]="track.title + ' cover'" 
+      class="cover-image"
+    />
+    <div *ngIf="!track.coverImage" class="cover-placeholder">
+      <span class="placeholder-icon"></span>
+    </div>
+    <span class="category-badge">{{ track.category }}</span>
+    
+    <!-- Hover Overlay with Play Button -->
+    <div class="cover-overlay">
+      <button (click)="onPlay(); $event.stopPropagation()" class="play-overlay-btn" title="Play">
+        <span class="play-icon"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Track Info -->
+  <div class="card-header">
+    <h3 class="track-title" [title]="track.title">{{ track.title }}</h3>
+  </div>
+
+  <div class="card-body">
+    <p class="artist">{{ track.artist }}</p>
+    <p *ngIf="track.description" class="description">{{ track.description }}</p>
+
+    <div class="metadata">
+      <span class="duration">{{ track.duration | duration }}</span>
+      <span class="added-date">{{ formatDate(track.addedDate) }}</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="track-stats">
+      <div class="stat plays-stat">
+        <span>{{ track.plays || 0 }} plays</span>
+      </div>
+      <div class="stat like-stat" [class.liked]="track.liked">
+        <span>{{ track.liked ? 'Liked' : '' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="card-actions">
+    <button (click)="onPlay()" class="btn btn-play">Play</button>
+    <button 
+      (click)="toggleLike(); $event.stopPropagation()" 
+      class="btn btn-like"
+      [class.liked]="track.liked"
+      [title]="track.liked ? 'Unlike' : 'Like'"
+    >
+      <span class="heart-icon"></span>
+    </button>
+    <a [routerLink]="['/edit-track', track.id]" class="btn btn-edit" title="Edit"></a>
+    <a [routerLink]="['/track', track.id]" class="btn btn-info" title="Details"></a>
+    <button (click)="onDelete(); $event.stopPropagation()" class="btn btn-delete" title="Delete"></button>
+  </div>
+</div>

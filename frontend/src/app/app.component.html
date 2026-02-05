@@ -1,0 +1,88 @@
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="nav-container">
+    <h1 class="nav-title">MusicStream</h1>
+    <ul class="nav-links">
+      <li><a routerLink="/library">Library</a></li>
+      <li><a routerLink="/add-track">Add Track</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Main Content - Router Outlet -->
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Global Audio Player -->
+<footer class="player-footer">
+  <app-audio-player></app-audio-player>
+</footer>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  .navbar {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover {
+    color: #007bff;
+  }
+
+  .main-content {
+    min-height: calc(100vh - 80px - 200px);
+    padding: 20px 0;
+  }
+
+  .player-footer {
+    background-color: #1a1a1a;
+    border-top: 1px solid #333;
+    padding: 10px 0;
+    position: sticky;
+    bottom: 0;
+  }
+</style>

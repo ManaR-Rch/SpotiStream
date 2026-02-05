@@ -10,16 +10,16 @@ RUN mvn dependency:go-offline
 # Copy source code
 COPY backend/src ./src
 
-# Build application
-RUN mvn clean package -DskipTests
+# Build application with Spring Boot
+RUN mvn clean package -DskipTests spring-boot:repackage
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Copy JAR from builder
-COPY --from=builder /app/target/musicstream-api-jar-with-dependencies.jar app.jar
+# Copy JAR from builder (Spring Boot executable JAR)
+COPY --from=builder /app/target/musicstream-api-1.0.0.jar app.jar
 
 # Install curl for health checks
 RUN apk add --no-cache curl

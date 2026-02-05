@@ -18,19 +18,19 @@ import java.util.List;
  * @RequiredArgsConstructor = Injection automatique du SongService
  * @Slf4j = Logger automatique
  * 
- * Chaque méthode = un endpoint REST
+ *        Chaque méthode = un endpoint REST
  * 
- * Convention REST (opérations CRUD):
+ *        Convention REST (opérations CRUD):
  * 
- * GET    /api/songs           → Récupérer toutes les chansons
- * GET    /api/songs/{id}      → Récupérer une chanson par ID
- * POST   /api/songs           → Créer une nouvelle chanson
- * PUT    /api/songs/{id}      → Mettre à jour une chanson
- * DELETE /api/songs/{id}      → Supprimer une chanson
- * GET    /api/songs/search    → Rechercher des chansons
+ *        GET /api/songs → Récupérer toutes les chansons
+ *        GET /api/songs/{id} → Récupérer une chanson par ID
+ *        POST /api/songs → Créer une nouvelle chanson
+ *        PUT /api/songs/{id} → Mettre à jour une chanson
+ *        DELETE /api/songs/{id} → Supprimer une chanson
+ *        GET /api/songs/search → Rechercher des chansons
  */
 @RestController
-@RequestMapping("/api/songs")
+@RequestMapping("/songs")
 @RequiredArgsConstructor
 @Slf4j
 public class SongController {
@@ -47,13 +47,13 @@ public class SongController {
      * 
      * Réponse:
      * [
-     *   {
-     *     "id": 1,
-     *     "title": "Imagine",
-     *     "artist": "John Lennon",
-     *     "duration": 180
-     *   },
-     *   ...
+     * {
+     * "id": 1,
+     * "title": "Imagine",
+     * "artist": "John Lennon",
+     * "duration": 180
+     * },
+     * ...
      * ]
      * 
      * @return Liste des chansons (HTTP 200)
@@ -75,10 +75,10 @@ public class SongController {
      * 
      * Réponse si trouvée (HTTP 200):
      * {
-     *   "id": 1,
-     *   "title": "Imagine",
-     *   "artist": "John Lennon",
-     *   "duration": 180
+     * "id": 1,
+     * "title": "Imagine",
+     * "artist": "John Lennon",
+     * "duration": 180
      * }
      * 
      * Réponse si non trouvée (HTTP 404):
@@ -102,20 +102,20 @@ public class SongController {
      * 
      * Exemple curl:
      * curl -X POST http://localhost:8080/api/songs \
-     *   -H "Content-Type: application/json" \
-     *   -d '{
-     *     "title": "Imagine",
-     *     "artist": "John Lennon",
-     *     "duration": 180
-     *   }'
+     * -H "Content-Type: application/json" \
+     * -d '{
+     * "title": "Imagine",
+     * "artist": "John Lennon",
+     * "duration": 180
+     * }'
      * 
      * Réponse (HTTP 201 CREATED):
      * {
-     *   "id": 1,
-     *   "title": "Imagine",
-     *   "artist": "John Lennon",
-     *   "duration": 180,
-     *   "createdAt": "2026-01-29T14:56:00"
+     * "id": 1,
+     * "title": "Imagine",
+     * "artist": "John Lennon",
+     * "duration": 180,
+     * "createdAt": "2026-01-29T14:56:00"
      * }
      * 
      * @param songDTO Les données de la chanson à créer (depuis le JSON du body)
@@ -138,12 +138,12 @@ public class SongController {
      * 
      * Exemple curl:
      * curl -X PUT http://localhost:8080/api/songs/1 \
-     *   -H "Content-Type: application/json" \
-     *   -d '{
-     *     "title": "Imagine (Remastered)",
-     *     "artist": "John Lennon",
-     *     "duration": 185
-     *   }'
+     * -H "Content-Type: application/json" \
+     * -d '{
+     * "title": "Imagine (Remastered)",
+     * "artist": "John Lennon",
+     * "duration": 185
+     * }'
      * 
      * Réponse si trouvée (HTTP 200):
      * { ... chanson mise à jour ... }
@@ -151,7 +151,7 @@ public class SongController {
      * Réponse si non trouvée (HTTP 404):
      * (vide)
      * 
-     * @param id L'ID de la chanson à mettre à jour
+     * @param id      L'ID de la chanson à mettre à jour
      * @param songDTO Les nouvelles données
      * @return La chanson mise à jour (HTTP 200) ou 404 si non trouvée
      */
@@ -203,12 +203,12 @@ public class SongController {
      * 
      * Réponse (HTTP 200):
      * [
-     *   {
-     *     "id": 1,
-     *     "title": "Imagine",
-     *     "artist": "John Lennon",
-     *     ...
-     *   }
+     * {
+     * "id": 1,
+     * "title": "Imagine",
+     * "artist": "John Lennon",
+     * ...
+     * }
      * ]
      * 
      * @param q Le mot-clé à rechercher

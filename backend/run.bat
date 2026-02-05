@@ -6,6 +6,6 @@ echo Starting MusicStream API on port 8080...
 echo.
 
 REM Compiler et lancer l'application
-mvn clean compile exec:java -Dexec.mainClass="com.musicstream.api.MusicstreamApiApplication" -Dexec.classpathScope=compile
+mvn clean compile exec:java -Dexec.mainClass="com.musicstream.api.MusicstreamApiApplication" -Dexec.classpathScope=runtime
 
 pause

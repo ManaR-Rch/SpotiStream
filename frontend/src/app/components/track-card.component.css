@@ -1,0 +1,604 @@
+/* ============================================
+   🎵 Track Card - Premium Glassmorphic Design
+   Matches MusicStream Premium Dark Theme
+   ============================================ */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.track-card {
+  background: rgba(22, 22, 31, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.track-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(99, 102, 241, 0.3), 
+    rgba(139, 92, 246, 0.3), 
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.track-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(99, 102, 241, 0.15);
+}
+
+.track-card:hover::before {
+  opacity: 1;
+}
+
+.track-card.dragging {
+  opacity: 0.6;
+  transform: scale(0.95) rotate(2deg);
+  box-shadow: 0 30px 60px rgba(99, 102, 241, 0.3);
+}
+
+/* Cover Image Section */
+.cover-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a25 0%, #12121a 100%);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.track-card:hover .cover-image {
+  transform: scale(1.08);
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.2) 0%, 
+    rgba(139, 92, 246, 0.15) 50%,
+    rgba(168, 85, 247, 0.1) 100%
+  );
+  color: rgba(99, 102, 241, 0.6);
+  position: relative;
+}
+
+.cover-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(99, 102, 241, 0.2) 0%, 
+    transparent 60%
+  );
+}
+
+/* Hover Overlay with Play Button */
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.4) 40%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.track-card:hover .cover-overlay {
+  opacity: 1;
+}
+
+.play-overlay-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  transform: translateY(20px) scale(0.8);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 24px rgba(99, 102, 241, 0.5),
+    0 0 40px rgba(99, 102, 241, 0.3);
+}
+
+.track-card:hover .play-overlay-btn {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.play-overlay-btn:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 
+    0 12px 32px rgba(99, 102, 241, 0.6),
+    0 0 60px rgba(99, 102, 241, 0.4);
+}
+
+.play-overlay-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Category Badge */
+.category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(139, 92, 246, 0.9));
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  z-index: 2;
+}
+
+/* Card Header */
+.card-header {
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.track-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+/* Card Body */
+.card-body {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.artist {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.description {
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Metadata Section */
+.metadata {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.duration, .added-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* Track Stats */
+.track-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.stat .liked {
+  color: #f472b6;
+  text-shadow: 0 0 12px rgba(244, 114, 182, 0.5);
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 16px;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-play {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  flex: 1;
+  font-size: 14px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.btn-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(99, 102, 241, 0.4),
+    0 0 40px rgba(99, 102, 241, 0.2);
+}
+
+.btn-play:active {
+  transform: translateY(0);
+}
+
+.btn-like {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 18px;
+  border-radius: 12px;
+}
+
+.btn-like:hover {
+  background: rgba(244, 114, 182, 0.1);
+  color: #f472b6;
+  border-color: rgba(244, 114, 182, 0.3);
+  transform: scale(1.08);
+}
+
+.btn-like.liked {
+  background: rgba(244, 114, 182, 0.15);
+  color: #f472b6;
+  border-color: rgba(244, 114, 182, 0.4);
+  box-shadow: 0 0 20px rgba(244, 114, 182, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-info {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+.btn-info:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.btn-edit {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+.btn-edit:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.btn-delete {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ============================================
+   CSS-BASED ICONS (No Emojis)
+   ============================================ */
+
+/* Music Note Icon for Placeholder */
+.placeholder-icon {
+  width: 48px;
+  height: 48px;
+  position: relative;
+  opacity: 0.5;
+}
+
+.placeholder-icon::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #6366f1;
+  border-radius: 50%;
+  bottom: 0;
+  left: 0;
+}
+
+.placeholder-icon::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 36px;
+  background: #6366f1;
+  border-radius: 2px;
+  bottom: 8px;
+  left: 12px;
+}
+
+/* Play Icon */
+.play-icon {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 16px;
+  border-color: transparent transparent transparent white;
+  margin-left: 4px;
+}
+
+/* Heart Icon */
+.heart-icon {
+  width: 18px;
+  height: 16px;
+  position: relative;
+}
+
+.heart-icon::before,
+.heart-icon::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 14px;
+  background: currentColor;
+  border-radius: 9px 9px 0 0;
+  top: 0;
+}
+
+.heart-icon::before {
+  left: 9px;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.heart-icon::after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+/* Edit Icon (Pencil) */
+.btn-edit::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  position: relative;
+}
+
+.btn-edit::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+  margin-top: 8px;
+  margin-left: -4px;
+}
+
+/* Info Icon */
+.btn-info::before {
+  content: 'i';
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Delete Icon (Trash) */
+.btn-delete::before {
+  content: '';
+  width: 12px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  position: relative;
+}
+
+.btn-delete::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  margin-top: -14px;
+  border-radius: 1px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .track-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .cover-container {
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .track-title {
+    font-size: 16px;
+  }
+
+  .artist {
+    font-size: 13px;
+  }
+
+  .card-actions {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .btn-play {
+    flex: 1 1 100%;
+    order: -1;
+  }
+
+  .btn-like, .btn-info, .btn-edit, .btn-delete {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .track-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .cover-placeholder {
+    font-size: 40px;
+  }
+
+  .play-overlay-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .category-badge {
+    padding: 4px 10px;
+    font-size: 9px;
+  }
+
+  .track-title {
+    font-size: 15px;
+  }
+
+  .metadata {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
